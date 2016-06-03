@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,4 +92,19 @@ public class TestSpringData {
 		return new Sort(Sort.Direction.DESC, "firstName");
 	}
 	
+	@Test
+	public void testFindAllPageable() {
+		Pageable pageable = new PageRequest(0, 5, orderByFirstNameAsc());
+		Page<Customer> page = repository.findAll(pageable);
+		assertThat(page.getContent().size(), is(5));
+	}
+	@Test
+	public void testFindAllPageable2() {
+		Pageable pageable = new PageRequest(0, 5, Sort.Direction.DESC, "lastName");
+		Page<Customer> page = repository.findAll(pageable);
+		assertThat(page.getContent().size(), is(5));
+		pageable = new PageRequest(0, 10, Sort.Direction.DESC, "lastName");
+		page = repository.findAll(pageable);
+		assertThat(page.getContent().size(), is(10));
+	}
 }
